@@ -38,7 +38,7 @@ public class AuthService {
                             user.getEmail()));
 
         } catch (AuthenticationException e) {
-            throw new IllegalArgumentException("Email o contraseña incorrectos");
+            throw new IllegalArgumentException("Invalid email or password");
         }
     }
 }

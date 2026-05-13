@@ -17,16 +17,16 @@ import com.mokatta.mokatta_api.auth.dtos.LoginRequest;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@Tag(name = "Auth", description = "Autenticación y gestión de sesión")
+@Tag(name = "Auth", description = "Authentication and session management")
 public class AuthController {
 
     private final AuthService authService;
 
     @PostMapping("/login")
-    @SecurityRequirements // Este endpoint no requiere JWT en Swagger
-    @Operation(summary = "Iniciar sesión", description = "Autentica al usuario y devuelve un token JWT.", responses = {
-            @ApiResponse(responseCode = "200", description = "Login exitoso", content = @Content(schema = @Schema(implementation = AuthResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Credenciales inválidas", content = @Content)
+    @SecurityRequirements // This endpoint does not require JWT in Swagger
+    @Operation(summary = "Login", description = "Authenticates the user and returns a JWT token.", responses = {
+            @ApiResponse(responseCode = "200", description = "Login successful", content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content)
     })
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
