@@ -13,7 +13,8 @@ public class ProductResponse {
     private String name;
     private String description;
     private BigDecimal price;
-    private String category;
+    private String categoryId;
+    private String categoryName;
     private String imageUrl;
     private boolean available;
     private boolean active;

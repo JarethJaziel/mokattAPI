@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 public class UpdateProductRequest {
@@ -17,8 +18,7 @@ public class UpdateProductRequest {
     @DecimalMin(value = "0.01", message = "Price must be greater than 0")
     private BigDecimal price;
 
-    @Size(max = 100, message = "Category must not exceed 100 characters")
-    private String category;
+    private UUID categoryId;
 
     private String imageUrl;
 }

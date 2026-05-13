@@ -1,45 +1,36 @@
-package com.mokatta.mokatta_api.products;
+package com.mokatta.mokatta_api.inventory;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import com.mokatta.mokatta_api.categories.Category;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "products")
+@Table(name = "ingredients")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Product {
+public class Ingredient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, unique = true, length = 150)
     private String name;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
     @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
+    private BigDecimal quantity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    @Column(nullable = false, length = 20)
+    private String unit;
 
-    @Column(name = "image_url", length = 500)
-    private String imageUrl;
-
-    @Column(nullable = false)
-    private boolean available = true;
+    @Column(name = "min_stock", nullable = false, precision = 10, scale = 2)
+    private BigDecimal minStock;
 
     @Column(nullable = false)
     private boolean active = true;

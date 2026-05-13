@@ -27,12 +27,12 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    @Operation(summary = "List products", description = "Returns all active products. Optionally filter by category.", responses = {
+    @Operation(summary = "List products", description = "Returns all active products. Optionally filter by category ID.", responses = {
             @ApiResponse(responseCode = "200", description = "Product list")
     })
     public ResponseEntity<List<ProductResponse>> findAll(
-            @RequestParam(required = false) String category) {
-        return ResponseEntity.ok(productService.findAll(category));
+            @RequestParam(required = false) UUID categoryId) {
+        return ResponseEntity.ok(productService.findAll(categoryId));
     }
 
     @GetMapping("/{id}")
@@ -45,19 +45,11 @@ public class ProductController {
         return ResponseEntity.ok(productService.findById(id));
     }
 
-    @GetMapping("/categories")
-    @Operation(summary = "List categories", description = "Returns all distinct category names from active products.", responses = {
-            @ApiResponse(responseCode = "200", description = "Category list")
-    })
-    public ResponseEntity<List<String>> findCategories() {
-        return ResponseEntity.ok(productService.findCategories());
-    }
-
     @PostMapping
     @Operation(summary = "Create product", description = "Adds a new product to the catalog.", responses = {
             @ApiResponse(responseCode = "201", description = "Product created",
                     content = @Content(schema = @Schema(implementation = ProductResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid data", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid data or Category not found", content = @Content)
     })
     public ResponseEntity<ProductResponse> create(@Valid @RequestBody CreateProductRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(request));
@@ -67,7 +59,7 @@ public class ProductController {
     @Operation(summary = "Update product", description = "Updates product fields. Only non-null fields are applied.", responses = {
             @ApiResponse(responseCode = "200", description = "Product updated",
                     content = @Content(schema = @Schema(implementation = ProductResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Product not found", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Product or Category not found", content = @Content)
     })
     public ResponseEntity<ProductResponse> update(@PathVariable UUID id,
             @Valid @RequestBody UpdateProductRequest request) {

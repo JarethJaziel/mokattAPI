@@ -3,6 +3,8 @@ package com.mokatta.mokatta_api.products;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import com.mokatta.mokatta_api.categories.Category;
+import com.mokatta.mokatta_api.categories.CategoryRepository;
 import com.mokatta.mokatta_api.products.dtos.CreateProductRequest;
 import com.mokatta.mokatta_api.products.dtos.ProductResponse;
 import com.mokatta.mokatta_api.products.dtos.UpdateProductRequest;
@@ -15,11 +17,12 @@ import java.util.UUID;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    public List<ProductResponse> findAll(String category) {
+    public List<ProductResponse> findAll(UUID categoryId) {
         List<Product> products;
-        if (category != null && !category.isBlank()) {
-            products = productRepository.findByCategoryAndActiveTrue(category);
+        if (categoryId != null) {
+            products = productRepository.findByCategoryIdAndActiveTrue(categoryId);
         } else {
             products = productRepository.findByActiveTrue();
         }
@@ -32,16 +35,15 @@ public class ProductService {
         return toResponse(product);
     }
 
-    public List<String> findCategories() {
-        return productRepository.findDistinctCategories();
-    }
-
     public ProductResponse create(CreateProductRequest request) {
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+
         Product product = Product.builder()
                 .name(request.getName())
                 .description(request.getDescription())
                 .price(request.getPrice())
-                .category(request.getCategory())
+                .category(category)
                 .imageUrl(request.getImageUrl())
                 .available(true)
                 .active(true)
@@ -63,8 +65,10 @@ public class ProductService {
         if (request.getPrice() != null) {
             product.setPrice(request.getPrice());
         }
-        if (request.getCategory() != null) {
-            product.setCategory(request.getCategory());
+        if (request.getCategoryId() != null) {
+            Category category = categoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+            product.setCategory(category);
         }
         if (request.getImageUrl() != null) {
             product.setImageUrl(request.getImageUrl());
@@ -93,7 +97,8 @@ public class ProductService {
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
-                product.getCategory(),
+                product.getCategory().getId().toString(),
+                product.getCategory().getName(),
                 product.getImageUrl(),
                 product.isAvailable(),
                 product.isActive(),
