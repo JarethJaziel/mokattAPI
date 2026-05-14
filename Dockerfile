@@ -1,5 +1,5 @@
-# Paso 1: Construcción con Maven y Java 25
-FROM maven:3.9.9-eclipse-temurin-25 AS build
+# Paso 1: Construcción con Maven y Java 25 (usando la etiqueta general 3.9)
+FROM maven:3.9-eclipse-temurin-25 AS build
 WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
