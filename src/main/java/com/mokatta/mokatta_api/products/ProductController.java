@@ -24,69 +24,63 @@ import java.util.UUID;
 @Tag(name = "Products", description = "Product catalog management (requires JWT)")
 public class ProductController {
 
-    private final ProductService productService;
+        private final ProductService productService;
 
-    @GetMapping
-    @Operation(summary = "List products", description = "Returns all active products. Optionally filter by category ID.", responses = {
-            @ApiResponse(responseCode = "200", description = "Product list")
-    })
-    public ResponseEntity<List<ProductResponse>> findAll(
-            @RequestParam(required = false) UUID categoryId) {
-        return ResponseEntity.ok(productService.findAll(categoryId));
-    }
+        @GetMapping
+        @Operation(summary = "List products", description = "Returns all active products. Optionally filter by category ID.", responses = {
+                        @ApiResponse(responseCode = "200", description = "Product list")
+        })
+        public ResponseEntity<List<ProductResponse>> findAll(
+                        @RequestParam(required = false) UUID categoryId) {
+                System.out.println("debug controller: categoryId = " + categoryId);
+                return ResponseEntity.ok(productService.findAll(categoryId));
+        }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get product by ID", responses = {
-            @ApiResponse(responseCode = "200", description = "Product found",
-                    content = @Content(schema = @Schema(implementation = ProductResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Product not found", content = @Content)
-    })
-    public ResponseEntity<ProductResponse> findById(@PathVariable UUID id) {
-        return ResponseEntity.ok(productService.findById(id));
-    }
+        @GetMapping("/{id}")
+        @Operation(summary = "Get product by ID", responses = {
+                        @ApiResponse(responseCode = "200", description = "Product found", content = @Content(schema = @Schema(implementation = ProductResponse.class))),
+                        @ApiResponse(responseCode = "400", description = "Product not found", content = @Content)
+        })
+        public ResponseEntity<ProductResponse> findById(@PathVariable UUID id) {
+                return ResponseEntity.ok(productService.findById(id));
+        }
 
-    @PostMapping
-    @Operation(summary = "Create product", description = "Adds a new product to the catalog.", responses = {
-            @ApiResponse(responseCode = "201", description = "Product created",
-                    content = @Content(schema = @Schema(implementation = ProductResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid data or Category not found", content = @Content)
-    })
-    public ResponseEntity<ProductResponse> create(@Valid @RequestBody CreateProductRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(request));
-    }
+        @PostMapping
+        @Operation(summary = "Create product", description = "Adds a new product to the catalog.", responses = {
+                        @ApiResponse(responseCode = "201", description = "Product created", content = @Content(schema = @Schema(implementation = ProductResponse.class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid data or Category not found", content = @Content)
+        })
+        public ResponseEntity<ProductResponse> create(@Valid @RequestBody CreateProductRequest request) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(request));
+        }
 
-    @PatchMapping("/{id}")
-    @Operation(summary = "Update product", description = "Updates product fields. Only non-null fields are applied.", responses = {
-            @ApiResponse(responseCode = "200", description = "Product updated",
-                    content = @Content(schema = @Schema(implementation = ProductResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Product or Category not found", content = @Content)
-    })
-    public ResponseEntity<ProductResponse> update(@PathVariable UUID id,
-            @Valid @RequestBody UpdateProductRequest request) {
-        return ResponseEntity.ok(productService.update(id, request));
-    }
+        @PatchMapping("/{id}")
+        @Operation(summary = "Update product", description = "Updates product fields. Only non-null fields are applied.", responses = {
+                        @ApiResponse(responseCode = "200", description = "Product updated", content = @Content(schema = @Schema(implementation = ProductResponse.class))),
+                        @ApiResponse(responseCode = "400", description = "Product or Category not found", content = @Content)
+        })
+        public ResponseEntity<ProductResponse> update(@PathVariable UUID id,
+                        @Valid @RequestBody UpdateProductRequest request) {
+                return ResponseEntity.ok(productService.update(id, request));
+        }
 
-    @PatchMapping("/{id}/toggle-available")
-    @Operation(summary = "Toggle product availability",
-            description = "Toggles whether the product can be ordered right now.",
-            responses = {
-                    @ApiResponse(responseCode = "204", description = "Availability toggled"),
-                    @ApiResponse(responseCode = "400", description = "Product not found", content = @Content)
-            })
-    public ResponseEntity<Void> toggleAvailable(@PathVariable UUID id) {
-        productService.toggleAvailable(id);
-        return ResponseEntity.noContent().build();
-    }
+        @PatchMapping("/{id}/toggle-available")
+        @Operation(summary = "Toggle product availability", description = "Toggles whether the product can be ordered right now.", responses = {
+                        @ApiResponse(responseCode = "204", description = "Availability toggled"),
+                        @ApiResponse(responseCode = "400", description = "Product not found", content = @Content)
+        })
+        public ResponseEntity<Void> toggleAvailable(@PathVariable UUID id) {
+                productService.toggleAvailable(id);
+                return ResponseEntity.noContent().build();
+        }
 
-    @PatchMapping("/{id}/toggle-active")
-    @Operation(summary = "Toggle product active status",
-            description = "Soft delete — toggles whether the product exists in the system.",
-            responses = {
-                    @ApiResponse(responseCode = "204", description = "Active status toggled"),
-                    @ApiResponse(responseCode = "400", description = "Product not found", content = @Content)
-            })
-    public ResponseEntity<Void> toggleActive(@PathVariable UUID id) {
-        productService.toggleActive(id);
-        return ResponseEntity.noContent().build();
-    }
+        @PatchMapping("/{id}/toggle-active")
+        @Operation(summary = "Toggle product active status", description = "Soft delete — toggles whether the product exists in the system.", responses = {
+                        @ApiResponse(responseCode = "204", description = "Active status toggled"),
+                        @ApiResponse(responseCode = "400", description = "Product not found", content = @Content)
+        })
+        public ResponseEntity<Void> toggleActive(@PathVariable UUID id) {
+                productService.toggleActive(id);
+                return ResponseEntity.noContent().build();
+        }
 }
