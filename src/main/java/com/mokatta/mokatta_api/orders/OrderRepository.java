@@ -42,4 +42,6 @@ public interface OrderRepository extends JpaRepository<Order, UUID>, JpaSpecific
                    "FROM orders WHERE created_at >= :start AND created_at <= :end " +
                    "GROUP BY hr ORDER BY hr ASC", nativeQuery = true)
     List<Object[]> getPeakHours(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    List<Order> findByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 }

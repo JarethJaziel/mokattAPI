@@ -12,6 +12,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+
 @RestController
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor
@@ -72,5 +77,37 @@ public class ReportController {
     public ResponseEntity<List<PeakHourDTO>> getPeakHours(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return ResponseEntity.ok(reportService.getPeakHours(date));
+    }
+
+    @GetMapping("/download/pdf")
+    @Operation(summary = "Download Sales Summary PDF", description = "Returns a PDF containing sales summary for a date range.")
+    public ResponseEntity<Resource> downloadSalesSummaryPdf(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+        
+        byte[] pdfBytes = reportService.generateSalesSummaryPdf(from, to);
+        ByteArrayResource resource = new ByteArrayResource(pdfBytes);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sales_summary.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .contentLength(pdfBytes.length)
+                .body(resource);
+    }
+
+    @GetMapping("/download/excel")
+    @Operation(summary = "Download Sales Summary Excel", description = "Returns an Excel file containing sales summary for a date range.")
+    public ResponseEntity<Resource> downloadSalesSummaryExcel(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
+        
+        byte[] excelBytes = reportService.generateSalesSummaryExcel(from, to);
+        ByteArrayResource resource = new ByteArrayResource(excelBytes);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=sales_summary.xlsx")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(excelBytes.length)
+                .body(resource);
     }
 }
